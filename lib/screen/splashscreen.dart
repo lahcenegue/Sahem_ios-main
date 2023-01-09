@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:sahem/screen/empoly/report/test.dart';
 import 'package:sahem/screen/login.dart';
 import 'package:sahem/screen/navbar.dart';
 import 'package:sahem/shared/compont.dart';
@@ -29,8 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
         } else if (preferences.getString('typeAccount') == 'moshrif') {
           navigatorOff(context: context, widget: NavBar(isSuper: true));
         } else if (preferences.getString('typeAccount') == 'moraqib') {
-          navigatorOff(context: context, widget: const TestMap());
-          //navigatorOff(context: context, widget: NavBar(isSuper: false));
+          navigatorOff(context: context, widget: NavBar(isSuper: false));
         } else {
           navigatorOff(context: context, widget: LoginScreen());
         }

@@ -2,19 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sahem/screen/empoly/report/report_screen_two.dart';
 import 'package:sahem/shared/compont.dart';
 import 'package:intl/intl.dart' as intl;
 
-class TestMap extends StatefulWidget {
-  const TestMap({super.key});
+class ReportScreenOne extends StatefulWidget {
+  const ReportScreenOne({super.key});
 
   @override
-  State<TestMap> createState() => _TestMapState();
+  State<ReportScreenOne> createState() => _ReportScreenOneState();
 }
 
-class _TestMapState extends State<TestMap> {
+class _ReportScreenOneState extends State<ReportScreenOne> {
   final TextEditingController addressController = TextEditingController();
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -22,11 +23,13 @@ class _TestMapState extends State<TestMap> {
   bool isLoading = false;
   double? lat;
   double? lng;
+  DateTime? timeNow;
 
   final List<Marker> _markers = <Marker>[];
 
   @override
   void initState() {
+    timeNow = DateTime.now();
     getCurrentLocation();
     super.initState();
   }
@@ -37,7 +40,11 @@ class _TestMapState extends State<TestMap> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text("test Map")),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
         body: lat == null
             ? const Center(
                 child: CircularProgressIndicator(),
@@ -74,7 +81,6 @@ class _TestMapState extends State<TestMap> {
                       child: Center(
                         child: steps(true, false, false),
                       )),
-
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: Column(
@@ -101,9 +107,9 @@ class _TestMapState extends State<TestMap> {
                                   fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 20),
-                            Text(addressController.text),
                           ],
                         ),
+                        Text(addressController.text),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -130,6 +136,8 @@ class _TestMapState extends State<TestMap> {
                             Text(intl.DateFormat("yyyy-MM-dd")
                                 .format(DateTime.now())
                                 .toString()),
+                            const SizedBox(width: 10),
+                            Text('${timeNow!.hour}:${timeNow!.minute}'),
                           ],
                         ),
                         const SizedBox(width: 20),
@@ -170,21 +178,6 @@ class _TestMapState extends State<TestMap> {
                       ],
                     ),
                   ),
-
-                  //test ======================================
-                  const Text("latitude"),
-                  Text(lat.toString()),
-                  const Text("Longitude"),
-                  Text(lng.toString()),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (lat == null) {
-                        getCurrentLocation();
-                      }
-                    },
-                    child: const Text("get position"),
-                  ),
                 ],
               ),
       ),
@@ -218,5 +211,26 @@ class _TestMapState extends State<TestMap> {
       lng = position.longitude;
       lat = position.latitude;
     });
+    getNameAdree();
+  }
+
+  getNameAdree() async {
+    try {
+      if (lat != null) {
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat!, lng!);
+        Placemark first = placemarks.first;
+        String palcename =
+            " ${first.locality}, ${first.administrativeArea},${first.subLocality}, ${first.subAdministrativeArea}, ${first.street}, ${first.name}, ${first.thoroughfare}, ${first.subThoroughfare}'";
+
+        setState(() {
+          addressController.text = palcename;
+        });
+
+        print('============================');
+        print(addressController.text);
+      }
+    } catch (e) {
+      print('error');
+    }
   }
 }

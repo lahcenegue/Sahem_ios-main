@@ -15,7 +15,7 @@ dependencies:
   http: ^0.13.5
   flutter_bloc: ^8.1.1
   shared_preferences: ^2.0.15
-  flutter_geocoder: ^0.2.2-nullsafety
+  #flutter_geocoder: ^0.2.2-nullsafety
   flutter_switch: ^0.3.2
   fluttertoast: ^8.1.1
   geocoding: ^2.0.5
